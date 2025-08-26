@@ -49,11 +49,6 @@ connection.on("UserListUpdated", (users) => {
     renderUsers(users || []);
 });
 
-// Notified when the server pairs you with someone
-connection.on("PairedWith", (otherUser) => {
-    addMessage(`(system) You are now paired with ${otherUser}.`);
-});
-
 // Start connection
 async function start() {
     try {
@@ -92,27 +87,6 @@ if (connectButton) {
     });
 }
 
-// Send message to a specific user (invokes ChatHub.SendMessage)
-sendButton.addEventListener("click", async () => {
-    const user = userInput.value.trim();
-    const msg = messageInput.value.trim();
-    if (!user) {
-        alert("Enter a target user identifier (or click one from the list).");
-        return;
-    }
-    if (!msg) return;
-
-    try {
-        await connection.invoke("SendMessage", user, msg);
-        addMessage(`(to ${user}) ${msg}`);
-        messageInput.value = "";
-        messageInput.focus();
-    } catch (err) {
-        console.error(err);
-        addMessage("Error sending message.");
-    }
-});
-
 // Send on Enter in message box
 messageInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
@@ -120,9 +94,6 @@ messageInput.addEventListener("keydown", (e) => {
     }
 });
 
-// ... keep your existing setup / helpers ...
-
-// NEW: react to auto-pairing state
 connection.on("Waiting", () => {
     addMessage("(system) Waiting for someone to pair with...");
 });
