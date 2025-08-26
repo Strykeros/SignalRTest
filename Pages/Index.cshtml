@@ -3,26 +3,35 @@
     <div class="row p-1">
         <div class="col-1">User</div>
         <div class="col-5"><input type="text" id="userInput" /></div>
+        <div class="col-2 text-start">
+            <input type="button" id="connectButton" value="Connect" /> <!-- NEW -->
+        </div>
     </div>
     <div class="row p-1">
         <div class="col-1">Message</div>
         <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6 text-end">
+        <div class="col-2 text-start">
             <input type="button" id="sendButton" value="Send Message" />
         </div>
     </div>
+
     <div class="row p-1">
-        <div class="col-6">
+        <div class="col-8">
             <hr />
         </div>
     </div>
+
     <div class="row p-1">
         <div class="col-6">
-            <ul id="messagesList"></ul>
+            <h5>Messages</h5>
+            <ul id="messagesList" style="min-height:200px;border:1px solid #eee;padding:8px;border-radius:6px;"></ul>
+        </div>
+        <div class="col-2">
+            <h5>Users</h5>
+            <ul id="usersList" style="min-height:200px;border:1px solid #eee;padding:8px;border-radius:6px;"></ul>
         </div>
     </div>
 </div>
+
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>

@@ -1,4 +1,5 @@
 using SignalRTest.Hubs;
+using SignalRTest.Services;
 
 namespace SignalRTest
 {
@@ -11,7 +12,7 @@ namespace SignalRTest
             // Add services to the container.
             builder.Services.AddRazorPages();
             builder.Services.AddSignalR();
-
+            builder.Services.AddSingleton<UserConnectionManagerService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
