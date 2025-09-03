@@ -1,0 +1,153 @@
+﻿@page
+@model SignalRTest.Views.Login.LoginModel
+@* Removed problematic using directive *@
+@{
+    ViewData["Title"] = "Sign in";
+    //var returnUrl = Model?.ReturnUrl ?? Context.Request.Query["returnUrl"].ToString();
+}
+
+<style>
+    .auth-wrap {
+        max-width: 420px;
+        margin: 4rem auto;
+        padding: 2rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+    }
+
+    .auth-title {
+        margin: 0 0 1rem;
+    }
+
+    .form-row {
+        margin-bottom: .9rem;
+    }
+
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: .35rem;
+    }
+
+    input[type="text"], input[type="email"], input[type="password"] {
+        width: 100%;
+        padding: .65rem .8rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+    }
+
+    .hint {
+        color: #64748b;
+        font-size: .9rem;
+        margin-top: .25rem;
+        display: block
+    }
+
+    .row-flex {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+        padding: .7rem 1rem;
+        border: 1px solid #2563eb;
+        border-radius: 10px;
+        background: #2563eb;
+        color: #fff;
+        cursor: pointer
+    }
+
+        .btn:disabled {
+            opacity: .7;
+            cursor: not-allowed
+        }
+
+    .muted-link {
+        font-size: .9rem;
+        color: #2563eb;
+        text-decoration: none
+    }
+
+        .muted-link:hover {
+            text-decoration: underline
+        }
+
+    .err-summary {
+        margin: .5rem 0;
+    }
+</style>
+
+<div class="auth-wrap">
+    <h1 class="auth-title">@ViewData["Title"]</h1>
+    <p class="hint">Sign in to access your dashboard.</p>
+    <div class="auth-wrap">
+        <h1 class="auth-title">@ViewData["Title"]</h1>
+        <p class="hint">Sign in to access your dashboard.</p>
+
+        <!-- Razor Pages posts back to THIS page by default -->
+        <form method="post" novalidate>
+            <!-- Anti-forgery is automatic with FormTagHelper; explicit token is fine too -->
+            @Html.AntiForgeryToken();
+
+            <!-- ReturnUrl comes from OnGet -->
+            <input type="hidden" asp-for="Input.ReturnUrl" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger err-summary"></div>
+
+            <div class="form-row">
+                <label asp-for="Input.UserNameOrEmail"></label>
+                <input asp-for="Input.UserNameOrEmail" autocomplete="username" />
+                <span asp-validation-for="Input.UserNameOrEmail" class="text-danger"></span>
+            </div>
+
+            <div class="form-row">
+                <label asp-for="Input.Password"></label>
+                <div style="position:relative">
+                    <input asp-for="Input.Password" autocomplete="current-password" id="pwd" type="password" />
+                </div>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-row">
+                <button class="btn" type="submit" id="submitBtn">
+                    <span id="btnText">Sign in</span>
+                </button>
+            </div>
+
+            <p class="hint">
+                No account?
+                <a class="muted-link" asp-page="/Register">Create one</a>.
+            </p>
+        </form>
+    </div>
+
+</div>
+
+<partial name="_ValidationScriptsPartial" />
+
+<script>
+    (function () {
+      const btn = document.getElementById('togglePwd');
+      const pwd = document.getElementById('pwd');
+      const submitBtn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('btnText');
+
+      btn?.addEventListener('click', function () {
+        const isPass = pwd.type === 'password';
+        pwd.type = isPass ? 'text' : 'password';
+        btn.textContent = isPass ? 'Hide' : 'Show';
+        pwd.focus();
+      });
+
+      // small UX touch to prevent double submits
+      document.querySelector('form')?.addEventListener('submit', function () {
+        submitBtn.disabled = true;
+        btnText.textContent = 'Signing in...';
+      });
+    })();
+</script>

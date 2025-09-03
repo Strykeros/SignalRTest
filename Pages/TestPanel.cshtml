@@ -1,0 +1,101 @@
+﻿@page
+@model SignalRTest.Pages.TestPanelModel
+@{
+    ViewData["Title"] = "TestPanel API Tester";
+}
+
+<style>
+    .card {
+        max-width: 700px;
+        margin: 2rem auto;
+        padding: 1.25rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+    }
+
+    .row {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: .75rem;
+        align-items: center;
+        margin-bottom: .75rem;
+    }
+
+    label {
+        font-weight: 600;
+    }
+
+    input, textarea {
+        width: 100%;
+        padding: .5rem .6rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+    }
+
+    .btns {
+        display: flex;
+        gap: .5rem;
+        margin-top: .75rem;
+    }
+
+    button {
+        padding: .6rem .9rem;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+        button.primary {
+            border-color: #2563eb;
+        }
+
+    pre {
+        background: #0b1020;
+        color: #e5e7eb;
+        padding: 1rem;
+        border-radius: 10px;
+        overflow: auto;
+    }
+
+    small.hint {
+        color: #6b7280;
+        display: block;
+        margin-top: .25rem;
+        grid-column: 2 / -1; /* align hint under input */
+    }
+</style>
+
+<div class="card">
+    <h1>@ViewData["Title"]</h1>
+
+    <form method="post" asp-page="/TestPanel" asp-page-handler="Logout" class="inline">
+        <button type="submit" class="btn btn-link">Log out</button>
+    </form>
+
+    <form id="formTest" autocomplete="off">
+        <input type="hidden" asp-for="Input.ReturnUrl" />
+
+        <div class="row">
+            <label for="userId">UserId</label>
+            <input id="userId" name="userId" placeholder="e.g. authenticated user's NameIdentifier" required />
+            <small class="hint">
+                Click “Send Test” to (1) set session <code>UserId</code>, (2) reconnect SignalR, and (3) POST <code>?handler=Test</code>.
+            </small>
+        </div>
+
+        <div class="btns">
+            <button id="sendForm" type="button" class="primary">Send Test</button>
+        </div>
+    </form>
+
+    <h3>Response</h3>
+    <pre id="output">—</pre>
+</div>
+
+<!-- Hidden form just to generate an anti-forgery token for fetch headers -->
+<form id="af" method="post" style="display:none">
+    @Html.AntiForgeryToken()
+</form>
+
+<script src="~/js/signalr/dist/browser/signalr.js" defer></script>
+<script src="~/js/testPanel.js" defer></script>

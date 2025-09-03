@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.SignalR;
 using SignalRTest.Hubs;
 using SignalRTest.Services;
 
@@ -13,6 +15,19 @@ namespace SignalRTest
             builder.Services.AddRazorPages();
             builder.Services.AddSignalR();
             builder.Services.AddSingleton<UserConnectionManagerService>();
+            builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+
+
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession();
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(o =>
+                {
+                    o.LoginPath = "/Login";         // Razor Page path
+                    o.AccessDeniedPath = "/Forbidden";
+                });
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -26,12 +41,14 @@ namespace SignalRTest
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseSession();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();
-            app.MapRazorPages()
-               .WithStaticAssets();
+            app.MapRazorPages();
+            app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+
             app.MapHub<ChatHub>("/chatHub");
             app.Run();
         }

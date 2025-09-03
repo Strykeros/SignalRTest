@@ -1,37 +1,64 @@
 ﻿@page
 <div class="container">
     <div class="row p-1">
-        <div class="col-1">User</div>
-        <div class="col-5"><input type="text" id="userInput" class="w-100" readonly disabled /></div>
-@*         <div class="col-2 text-start">
-            <input type="button" id="connectButton" value="Connect" />
-        </div> *@
-    </div>
-    <div class="row p-1">
-        <div class="col-1">Message</div>
-        <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
-        <div class="col-2 text-start">
-            <input type="button" id="sendButton" value="Send Message" />
-        </div>
-    </div>
-
-    <div class="row p-1">
         <div class="col-8">
             <hr />
         </div>
     </div>
 
     <div class="row p-1">
-        <div class="col-6">
-            <h5>Messages</h5>
-            <ul id="messagesList" style="min-height:200px;border:1px solid #eee;padding:8px;border-radius:6px;"></ul>
+        <div class="col-8">
+            <h5>Test Messages & Data</h5>
+            <div id="messagesList" style="min-height:300px;border:1px solid #eee;padding:12px;border-radius:6px;background:#f9f9f9;"></div>
         </div>
-@*         <div class="col-2">
-            <h5>Users</h5>
-            <ul id="usersList" style="min-height:200px;border:1px solid #eee;padding:8px;border-radius:6px;"></ul>
-        </div> *@
+        <div class="col-4">
+            <h5>Connection Status</h5>
+            <div id="statusPanel" style="min-height:100px;border:1px solid #ddd;padding:8px;border-radius:6px;background:#f5f5f5;">
+                <div id="connectionStatus">Disconnected</div>
+                <div id="userInfo"></div>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    .message-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        font-family: 'Courier New', monospace;
+    }
+
+    .message-header {
+        background: #e3f2fd;
+        padding: 6px;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #1565c0;
+    }
+
+    .message-content {
+        background: #f8f9fa;
+        padding: 8px;
+        border-radius: 4px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        font-size: 12px;
+    }
+
+    .status-connected {
+        color: #4caf50;
+        font-weight: bold;
+    }
+
+    .status-disconnected {
+        color: #f44336;
+        font-weight: bold;
+    }
+</style>
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
