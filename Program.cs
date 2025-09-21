@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.SignalR;
 using SignalRTest.Hubs;
 using SignalRTest.Services;
+using Microsoft.OpenApi.Models;
+
 
 namespace SignalRTest
 {
@@ -11,45 +12,86 @@ namespace SignalRTest
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddRazorPages();
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "SignalR Test API",
+                    Version = "v1",
+                    Description = "API for SignalR Test Application"
+                });
+            });
+
             builder.Services.AddSignalR();
             builder.Services.AddSingleton<UserConnectionManagerService>();
-            builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("client", p => p
+                    .WithOrigins("https://localhost:5173")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials());
+            });
 
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession();
-            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(o =>
-                {
-                    o.LoginPath = "/Login";         // Razor Page path
-                    o.AccessDeniedPath = "/Forbidden";
-                });
 
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+    {
+        options.LoginPath = "/validate-login";
+        options.LogoutPath = "/logout";
+        options.AccessDeniedPath = "/api/auth/validate-login";
+        options.SlidingExpiration = true;
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.Events.OnRedirectToLogin = context =>
+        {
+            // For API calls, return 401 instead of redirect
+            context.Response.StatusCode = 401;
+            return Task.CompletedTask;
+        };
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            context.Response.StatusCode = 403;
+            return Task.CompletedTask;
+        };
+    });
 
             var app = builder.Build();
 
+            app.UseCors("client");
+
             // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "SignalR Test API v1");
+                    c.RoutePrefix = "swagger";
+                });
+            }
+            else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
-
-            app.UseRouting();
             app.UseSession();
-            app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapStaticAssets();
-            app.MapRazorPages();
-            app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            if (app.Environment.IsDevelopment())
+            {
+                app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
+            }
 
+            app.MapControllers();
             app.MapHub<ChatHub>("/chatHub");
+
             app.Run();
         }
     }
