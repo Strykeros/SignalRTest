@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace SignalRTest.Controllers
 {
     [ApiController]
-    //[Route("[controller]")]
     public class AuthController : ControllerBase
     {
         [HttpPost("validate-login")]
@@ -103,10 +102,6 @@ namespace SignalRTest.Controllers
                     Error = ex.Message
                 });
             }
-            HttpContext.Session.Clear();
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            return Ok(new { Success = true, Message = "Logged out successfully" });
         }
 
 

@@ -22,7 +22,7 @@ namespace SignalRTest.Services
             {
                 var wasEmpty = set.Count == 0;
                 set.Add(connectionId);
-                return wasEmpty; // true if this is the first connection of this user
+                return wasEmpty;
             }
         }
 
@@ -55,7 +55,7 @@ namespace SignalRTest.Services
 
         public string GetGroupName(string a, string b)
         {
-            // canonical group name for this pair
+            // group name for pair
             return "pair:" + (string.CompareOrdinal(a, b) <= 0 ? $"{a}|{b}" : $"{b}|{a}");
         }
 
@@ -65,7 +65,6 @@ namespace SignalRTest.Services
         /// </summary>
         public string? TryAutoPairOnOnline(string userId)
         {
-            // Already paired? nothing to do.
             if (_partnerOf.ContainsKey(userId)) return GetPartner(userId);
 
             lock (_waitLock)

@@ -106,7 +106,7 @@ public class ChatHub : Hub
         }
     }
 
-    // (Optional) Still allow explicit targeting by user id
+    // allow explicit targeting by user id
     public async Task SendMessage(string user, string message)
     {
         var me = CurrentUserId;
